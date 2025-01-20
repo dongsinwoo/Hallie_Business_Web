@@ -2,9 +2,17 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Sidebar from './Sidebar';
 import AboutPage from '../pages/about/AboutPage';
+import { useLocation } from 'react-router-dom';
 
 const Layout = ({ children }) => {
   const [login, setLogin] = useState(false);
+  const location = useLocation();
+
+  // 로그인, 회원가입 페이지일 경우 사이드바 없이 표시
+  if (location.pathname === '/login' || location.pathname === '/register') {
+    return children;
+  }
+
   return (
     <LayoutWrapper>
       {login ? (

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ReactFullpage from '@fullpage/react-fullpage';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import mainTitle from '../../assets/images/des.png';
 import character from '../../assets/images/characters-3d.png';
@@ -26,7 +26,7 @@ const AboutPage = () => {
                     isVisible={currentSection === 0}
                   />
                   <ButtonGroup isVisible={currentSection === 0}>
-                    <PrimaryButton onClick={() => navigate('/register')}>
+                    <PrimaryButton onClick={() => navigate('/login')}>
                       함께하기
                     </PrimaryButton>
                     <SecondaryButton onClick={() => fullpageApi.moveSectionDown()}>

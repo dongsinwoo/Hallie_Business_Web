@@ -8,11 +8,15 @@ import OrderDetailPage from './pages/orders/OrderDetailPage';
 import ProductFormPage from './pages/products/ProductFormPage';
 import QuestionsPage from './pages/questions/QuestionsPage';
 import AboutPage from './pages/about/AboutPage';
+import LoginPage from './pages/auth/LoginPage';
+import RegisterPage from './pages/auth/RegisterPage';
 function App() {
   return (
     <BrowserRouter>
       <Layout>
         <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/" element={<MainPage />} />
           <Route path="/orders" element={<OrderPage />} />
