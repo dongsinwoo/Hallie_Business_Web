@@ -5,6 +5,113 @@ import { useNavigate } from 'react-router-dom';
 const ProductPage = () => {
   const navigate = useNavigate();
 
+  // 예시 데이터 (실제 앱에서는 API 등을 통해 받아올 수 있습니다)
+  const products = [
+    {
+      id: 'product-1',
+      name: '유기농 사과',
+      price: 5900,
+      sales: 150,
+      expiryDate: '2024-01-31',
+      origin: '국내산',
+      halalCert: {
+        certified: true,
+        expiryDate: '2024-01-31'
+      }
+    },
+    {
+      id: 'product-2',
+      name: '프리미엄 소고기',
+      price: 35800,
+      sales: 120,
+      expiryDate: '2024-03-05',
+      origin: '호주산',
+      halalCert: {
+        certified: true,
+        expiryDate: '2024-03-05'
+      }
+    },
+    {
+      id: 'product-3',
+      name: '유기농 당근',
+      price: 3900,
+      sales: 200,
+      expiryDate: '2024-01-25',
+      origin: '국내산',
+      halalCert: {
+        certified: false,
+        reason: '인증 진행중'
+      }
+    },
+    {
+      id: 'product-4',
+      name: '양배추즙',
+      price: 1800,
+      sales: 50,
+      expiryDate: '2024-05-10',
+      origin: '국내산',
+      halalCert: {
+        certified: false,
+        reason: '인증 미신청'
+      }
+    },
+  ];
+
+  // 만료일까지 남은 일수를 계산하는 헬퍼 함수
+  const getDaysToExpiry = (expiryStr) => {
+    if (!expiryStr) return Infinity; 
+    const today = new Date();
+    const expiry = new Date(expiryStr);
+    const diff = expiry - today;
+    return Math.floor(diff / (1000 * 60 * 60 * 24)); // 일 단위
+  };
+
+  // "인증 갱신 필요" 임박 일수 (예: 45일 이하면 표시)
+  const RENEWAL_THRESHOLD = 45;
+
+  // 갱신이 필요한 상품 필터링
+  const renewalNeededProducts = products.filter(
+    (product) => {
+      const daysLeft = getDaysToExpiry(product.expiryDate);
+      return daysLeft > 0 && daysLeft <= RENEWAL_THRESHOLD;
+    }
+  );
+
+  // 할랄 인증 만료일 계산 함수 (기존 함수와 별도로 관리)
+  const getDaysToHalalExpiry = (certExpiryStr) => {
+    if (!certExpiryStr) return Infinity;
+    const today = new Date();
+    const expiry = new Date(certExpiryStr);
+    const diff = expiry - today;
+    return Math.floor(diff / (1000 * 60 * 60 * 24));
+  };
+
+  // 컴포넌트 내부에 추가할 필터링 로직
+  const HALAL_RENEWAL_THRESHOLD = 45; // 할랄 인증 갱신 임박 기준일
+
+  // 할랄 인증 만료 임박 상품
+  const nearExpiryHalalProducts = products.filter(
+    (product) => 
+      product.halalCert?.certified && 
+      getDaysToHalalExpiry(product.halalCert.expiryDate) <= HALAL_RENEWAL_THRESHOLD
+  );
+
+  // 할랄 미인증 상품
+  const nonHalalProducts = products.filter(
+    (product) => !product.halalCert?.certified
+  );
+
+  // 할랄 인증 신청 핸들러 추가
+  const handleApplyHalal = (productId) => {
+    // 실제 구현시에는 인증 신청 페이지로 이동하거나 모달을 띄우는 등의 로직 추가
+    navigate(`/products/${productId}/halal-apply`);
+  };
+
+  // 갱신하기 핸들러 수정 (할랄 인증 갱신용)
+  const handleRenew = (productId) => {
+    navigate(`/products/${productId}/halal-renew`);
+  };
+
   const handleAddProduct = () => {
     navigate('/products/new');
   };
@@ -33,7 +140,7 @@ const ProductPage = () => {
           새 상품 추가
         </AddButton>
       </Header>
-
+      
       <StatsGrid>
         <StatCard>
           <StatTitle>총 상품 수</StatTitle>
@@ -50,6 +157,121 @@ const ProductPage = () => {
           <StatDesc>30개 판매</StatDesc>
         </StatCard>
       </StatsGrid>
+
+      {/* 새로 추가된: "인증 갱신이 필요한 상품" 표시 (표 형식) */}
+      {renewalNeededProducts.length > 0 && (
+        <RenewalSection>
+          <SectionTitle>인증 갱신이 필요한 상품</SectionTitle>
+          <RenewalTable>
+            <thead>
+              <tr>
+                <th>상품명</th>
+                <th>유통기한</th>
+                <th>남은 일수</th>
+                <th>갱신</th>
+              </tr>
+            </thead>
+            <tbody>
+              {renewalNeededProducts.map((item) => {
+                const daysLeft = getDaysToExpiry(item.expiryDate);
+                return (
+                  <tr key={item.id}>
+                    <td>{item.name}</td>
+                    <td>{item.expiryDate}</td>
+                    <td style={{ color: daysLeft < 10 ? 'red' : '#111827' }}>
+                      {daysLeft}일
+                    </td>
+                    <td>
+                      <RenewButton onClick={() => handleRenew(item.id)}>
+                        갱신하러가기
+                      </RenewButton>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </RenewalTable>
+        </RenewalSection>
+      )}
+
+      {/* 할랄 인증 만료 임박 상품 테이블 */}
+      {nearExpiryHalalProducts.length > 0 && (
+        <HalalSection>
+          <SectionTitle>할랄 인증 만료 임박 상품</SectionTitle>
+          <HalalTable>
+            <thead>
+              <tr>
+                <th>상품명</th>
+                <th>원산지</th>
+                <th>인증 만료일</th>
+                <th>남은 일수</th>
+                <th>갱신</th>
+              </tr>
+            </thead>
+            <tbody>
+              {nearExpiryHalalProducts.map((product) => {
+                const daysLeft = getDaysToHalalExpiry(product.halalCert.expiryDate);
+                return (
+                  <tr key={product.id}>
+                    <td>{product.name}</td>
+                    <td>{product.origin}</td>
+                    <td>{product.halalCert.expiryDate}</td>
+                    <td style={{ 
+                      color: daysLeft <= 15 ? '#EF4444' : 
+                             daysLeft <= 30 ? '#F59E0B' : '#111827',
+                      fontWeight: daysLeft <= 30 ? '600' : '400'
+                    }}>
+                      {daysLeft}일
+                    </td>
+                    <td>
+                      <RenewButton onClick={() => handleRenew(product.id)}>
+                        갱신하기
+                      </RenewButton>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </HalalTable>
+        </HalalSection>
+      )}
+
+      {/* 할랄 미인증 상품 테이블 */}
+      {nonHalalProducts.length > 0 && (
+        <HalalSection>
+          <SectionTitle>할랄 미인증 상품</SectionTitle>
+          <HalalTable>
+            <thead>
+              <tr>
+                <th>상품명</th>
+                <th>원산지</th>
+                <th>상태</th>
+                <th>조치</th>
+              </tr>
+            </thead>
+            <tbody>
+              {nonHalalProducts.map((product) => (
+                <tr key={product.id}>
+                  <td>{product.name}</td>
+                  <td>{product.origin}</td>
+                  <td>
+                    <StatusBadge status={product.halalCert.reason}>
+                      {product.halalCert.reason}
+                    </StatusBadge>
+                  </td>
+                  <td>
+                    <ApplyButton onClick={() => handleApplyHalal(product.id)}>
+                      인증 신청
+                    </ApplyButton>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </HalalTable>
+        </HalalSection>
+      )}
+
+     
 
       <RankingSection>
         <SectionTitle>상품 판매 랭킹</SectionTitle>
@@ -116,27 +338,31 @@ const ProductPage = () => {
       />
 
       <ProductGrid>
-        <ProductCard>
-          <ProductImage />
-          <ProductInfo>
-            <ProductName>유기농 사과</ProductName>
-            <ProductDesc>신선한 유기농 사과</ProductDesc>
-            <PriceRow>
-              <Price>5,900원</Price>
-              <SalesInfo>판매량: 150개</SalesInfo>
-            </PriceRow>
-            <ExpiryDate>유통기한: 2024-01-31</ExpiryDate>
-            <Origin>원산지: 국내산</Origin>
-            <Stock>판매량: 150개</Stock>
-            <ButtonGroup>
-              <EditButton onClick={() => handleEditProduct('product-1')}>
-                수정
-              </EditButton>
-              <DeleteButton>삭제</DeleteButton>
-            </ButtonGroup>
-          </ProductInfo>
-        </ProductCard>
-        {/* 추가 상품 카드들... */}
+        {products.map((product) => (
+          <ProductCard key={product.id}>
+            {product.halalCert?.certified && (
+              <HalalBadge title="할랄 인증 제품">
+                <HalalIcon />
+              </HalalBadge>
+            )}
+            <ProductImage />
+            <ProductInfo>
+              <ProductName>{product.name}</ProductName>
+              <ProductDesc>원산지: {product.origin}</ProductDesc>
+              <PriceRow>
+                <Price>{product.price.toLocaleString()}원</Price>
+                <SalesInfo>판매량: {product.sales}개</SalesInfo>
+              </PriceRow>
+              <ExpiryDate>유통기한: {product.expiryDate}</ExpiryDate>
+              <ButtonGroup>
+                <EditButton onClick={() => handleEditProduct(product.id)}>
+                  수정
+                </EditButton>
+                <DeleteButton>삭제</DeleteButton>
+              </ButtonGroup>
+            </ProductInfo>
+          </ProductCard>
+        ))}
       </ProductGrid>
     </Container>
   );
@@ -144,13 +370,15 @@ const ProductPage = () => {
 
 const Container = styled.div`
   padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
 `;
 
 const Header = styled.div`
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 24px;
+  margin-bottom: 32px;
 `;
 
 const Title = styled.h1`
@@ -253,11 +481,39 @@ const ProductGrid = styled.div`
 `;
 
 const ProductCard = styled.div`
-  background: white;
-  border-radius: 12px;
+  position: relative;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
 `;
+
+const HalalBadge = styled.div`
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+`;
+
+const HalalIcon = () => (
+  <svg 
+    width="20" 
+    height="20" 
+    viewBox="0 0 24 24" 
+    fill="#00A67C"
+  >
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+  </svg>
+);
 
 const ProductImage = styled.div`
   width: ${props => props.small ? '40px' : '100%'};
@@ -306,18 +562,6 @@ const SalesInfo = styled.div`
 `;
 
 const ExpiryDate = styled.div`
-  font-size: 14px;
-  color: #6B7280;
-  margin-top: 4px;
-`;
-
-const Origin = styled.div`
-  font-size: 14px;
-  color: #6B7280;
-  margin-top: 4px;
-`;
-
-const Stock = styled.div`
   font-size: 14px;
   color: #6B7280;
   margin-top: 4px;
@@ -441,6 +685,94 @@ const SalesTrend = styled.div`
   font-size: 12px;
   color: ${props => props.positive ? '#10B981' : '#EF4444'};
   margin-top: 4px;
+`;
+
+const RenewalSection = styled.section`
+  margin-bottom: 32px;
+  border: 1px solid #e5e5e5;
+  padding: 16px;
+  border-radius: 6px;
+`;
+
+const RenewalTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+
+  thead {
+    background-color: #f3f4f6;
+  }
+
+  th, td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #e5e5e5;
+    text-align: left;
+  }
+`;
+
+const RenewButton = styled.button`
+  padding: 6px 10px;
+  background-color: #00c853;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+`;
+
+const HalalSection = styled.section`
+  margin-bottom: 32px;
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+`;
+
+const HalalTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    background: #F9FAFB;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 500;
+    color: #374151;
+    border-bottom: 1px solid #E5E7EB;
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #E5E7EB;
+  }
+
+  tbody tr:hover {
+    background: #F9FAFB;
+  }
+`;
+
+const StatusBadge = styled.span`
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  background: ${props => 
+    props.status === '인증 진행중' ? '#FEF3C7' : '#FEE2E2'};
+  color: ${props => 
+    props.status === '인증 진행중' ? '#92400E' : '#B91C1C'};
+`;
+
+const ApplyButton = styled.button`
+  padding: 6px 12px;
+  background: #4F46E5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+
+  &:hover {
+    background: #4338CA;
+  }
 `;
 
 export default ProductPage;

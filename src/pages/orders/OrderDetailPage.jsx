@@ -286,28 +286,6 @@ const OrderBasicInfo = styled(Section)`
   gap: 32px;
 `;
 
-const BackButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 16px;
-  margin-bottom: 24px;
-  background: none;
-  border: none;
-  color: #6B7280;
-  font-size: 14px;
-  cursor: pointer;
-  
-  &:hover {
-    color: #111827;
-  }
-
-  svg {
-    width: 20px;
-    height: 20px;
-  }
-`;
-
 const TitleSection = styled.div`
   display: flex;
   align-items: center;

@@ -114,6 +114,8 @@ const OrderPage = () => {
 
 const Container = styled.div`
   padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
 `;
 
 const Header = styled.div`

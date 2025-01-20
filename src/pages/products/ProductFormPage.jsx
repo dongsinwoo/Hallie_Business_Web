@@ -68,16 +68,6 @@ const ProductFormPage = () => {
           </FormGroup>
 
           <FormGroup>
-            <Label>설명</Label>
-            <TextArea placeholder="상품에 대한 설명을 입력하세요" />
-          </FormGroup>
-
-          <FormGroup>
-            <Label>유통기한</Label>
-            <Input type="date" />
-          </FormGroup>
-
-          <FormGroup>
             <Label>원산지</Label>
             <Input type="text" placeholder="원산지를 입력하세요" />
           </FormGroup>
@@ -95,6 +85,77 @@ const ProductFormPage = () => {
           <FormGroup>
             <Label>판매량</Label>
             <Input type="number" placeholder="0" />
+          </FormGroup>
+
+          <FormGroup>
+            <Label>할랄 인증 여부</Label>
+            <RadioGroup>
+              <RadioLabel>
+                <input
+                  type="radio"
+                  name="halalCertified"
+                  value="true"
+                />
+                인증됨
+              </RadioLabel>
+              <RadioLabel>
+                <input
+                  type="radio"
+                  name="halalCertified"
+                  value="false"
+                />
+                미인증
+              </RadioLabel>
+            </RadioGroup>
+          </FormGroup>
+
+          <FormGroup>
+            <Label>할랄 인증 만료일</Label>
+            <Input 
+              type="date" 
+              name="halalExpiryDate"
+            />
+          </FormGroup>
+
+          <FormGroup>
+            <Label>할랄 인증서</Label>
+            <FileUploadArea>
+              <FileInput
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                id="halalCertFile"
+              />
+              <FileUploadLabel htmlFor="halalCertFile">
+                인증서 파일 선택
+              </FileUploadLabel>
+              <FileNameDisplay>선택된 파일 없음</FileNameDisplay>
+            </FileUploadArea>
+          </FormGroup>
+
+          <FormGroup>
+            <Label>상세 설명</Label>
+            <RichTextEditor
+              placeholder="상품의 상세한 설명을 입력하세요. (원재료, 특징, 보관방법 등)"
+            />
+          </FormGroup>
+
+          <FormGroup>
+            <Label>추가 이미지</Label>
+            <ImageGrid>
+              <ImageUploadBox>
+                <ImageInput
+                  type="file"
+                  accept="image/*"
+                  id="additionalImage1"
+                />
+                <UploadIcon>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="#9CA3AF">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                  </svg>
+                </UploadIcon>
+                <ImageUploadText>이미지 추가</ImageUploadText>
+              </ImageUploadBox>
+            </ImageGrid>
           </FormGroup>
         </FormSection>
       </FormLayout>
@@ -293,6 +354,110 @@ const TextArea = styled.textarea`
     outline: none;
     border-color: #00D54B;
   }
+`;
+
+const RadioGroup = styled.div`
+  display: flex;
+  gap: 16px;
+`;
+
+const RadioLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #374151;
+
+  input[type="radio"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+`;
+
+const FileUploadArea = styled.div`
+  display: flex;
+  gap: 12px;
+  align-items: center;
+`;
+
+const FileInput = styled.input`
+  display: none;
+`;
+
+const FileUploadLabel = styled.label`
+  padding: 8px 16px;
+  background: #F3F4F6;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  border: 1px solid #E5E7EB;
+
+  &:hover {
+    background: #E5E7EB;
+  }
+`;
+
+const FileNameDisplay = styled.span`
+  font-size: 14px;
+  color: #6B7280;
+`;
+
+const RichTextEditor = styled.textarea`
+  padding: 16px;
+  min-height: 200px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+
+  &:focus {
+    outline: none;
+    border-color: #00D54B;
+  }
+`;
+
+const ImageGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+`;
+
+const ImageUploadBox = styled.div`
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  background: #F9FAFB;
+  border: 2px dashed #E5E7EB;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #00D54B;
+    background: #F3F4F6;
+  }
+`;
+
+const ImageInput = styled.input`
+  display: none;
+`;
+
+const UploadIcon = styled.div`
+  margin-bottom: 8px;
+`;
+
+const ImageUploadText = styled.span`
+  font-size: 12px;
+  color: #6B7280;
 `;
 
 export default ProductFormPage;

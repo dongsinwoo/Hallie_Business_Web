@@ -60,7 +60,7 @@ const MainPage = () => {
   return (
     <Container>
       <Header>
-        <Title>대시보드</Title>
+        <Title>기업이름</Title>
         <DateInfo>2024년 1월 18일 기준</DateInfo>
       </Header>
 
@@ -247,12 +247,7 @@ const DateInfo = styled.div`
   font-size: 14px;
 `;
 
-const StatsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 24px;
-  margin-bottom: 32px;
-`;
+
 
 const StatCard = styled.div`
   background: white;
@@ -314,16 +309,6 @@ const CustomerSection = styled.div`
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 `;
 
-const ChartPlaceholder = styled.div`
-  width: 100%;
-  height: 300px;
-  background: #F3F4F6;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #6B7280;
-`;
 
 const ProductList = styled.div`
   display: flex;

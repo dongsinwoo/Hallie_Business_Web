@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { SearchIcon, SettingsIcon, NotificationIcon } from './Icons';
+import { NotificationIcon } from './Icons';
 
 const Header = () => {
   return (
@@ -8,7 +8,6 @@ const Header = () => {
       <Title>대시보드</Title>
       <HeaderIcons>
         <IconButton>
-          <SettingsIcon />
         </IconButton>
         <IconButton>
           <NotificationIcon />
@@ -27,7 +26,6 @@ const HeaderWrapper = styled.header`
   background-color: white;
   padding: 16px 24px;  
   border-radius: 12px;
-  max-width: 1200px;
   margin: 0 auto;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 `;
