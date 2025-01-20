@@ -1,14 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Sidebar from './Sidebar';
+import AboutPage from '../pages/about/AboutPage';
 
 const Layout = ({ children }) => {
+  const [login, setLogin] = useState(false);
   return (
     <LayoutWrapper>
-      <Sidebar />
-      <MainContent>
-        {children}
-      </MainContent>
+      {login ? (
+        <>
+          <Sidebar />
+          <MainContent>
+            {children}
+          </MainContent>
+        </>
+      ) : (
+        <AboutPage />
+      )}
     </LayoutWrapper>
   );
 };

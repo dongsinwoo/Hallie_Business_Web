@@ -7,12 +7,13 @@ import ProductPage from './pages/products/ProductPage';
 import OrderDetailPage from './pages/orders/OrderDetailPage';
 import ProductFormPage from './pages/products/ProductFormPage';
 import QuestionsPage from './pages/questions/QuestionsPage';
-
+import AboutPage from './pages/about/AboutPage';
 function App() {
   return (
     <BrowserRouter>
       <Layout>
         <Routes>
+          <Route path="/about" element={<AboutPage />} />
           <Route path="/" element={<MainPage />} />
           <Route path="/orders" element={<OrderPage />} />
           <Route path="/products" element={<ProductPage />} />
