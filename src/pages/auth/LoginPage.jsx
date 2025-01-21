@@ -36,7 +36,7 @@ const LoginPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </InputGroup>
-            <LoginButton type="submit">로그인</LoginButton>
+            <LoginButton type="submit" onClick={() => navigate('/dashboard')}>로그인</LoginButton>
 
             <Divider>또는 소셜 계정으로 로그인</Divider>
 
