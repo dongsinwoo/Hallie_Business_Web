@@ -47,8 +47,7 @@ const OrderDetailPage = () => {
               <img src="/placeholder.png" alt="상품 이미지" />
             </ProductImage>
             <ProductInfo>
-              <ProductName>프리미엄 티셔츠</ProductName>
-              <ProductOption>블랙/L</ProductOption>
+              <ProductName>유기농 할랄 사과</ProductName>
               <Quantity>2개</Quantity>
               <Price>₩39,000</Price>
             </ProductInfo>

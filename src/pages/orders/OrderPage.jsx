@@ -82,8 +82,8 @@ const OrderPage = () => {
               <td>2024-01-18 14:30</td>
               <td>
                 <ProductInfo>
-                  프리미엄 티셔츠<br />
-                  블랙/L / 2개
+                  유기농 할랄 사과<br />
+                  2개
                 </ProductInfo>
               </td>
               <td>

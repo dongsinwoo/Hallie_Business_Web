@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ReactFullpage from '@fullpage/react-fullpage';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import mainTitle from '../../assets/images/des.png';
 import character from '../../assets/images/characters-3d.png';
@@ -46,36 +46,35 @@ const AboutPage = () => {
                   <ServiceImage>
                     <ImageOverlay />
                     <ImageContent isVisible={currentSection === 1}>
-                      <ImageTitle>Professional Service</ImageTitle>
+                      <ImageTitle>Halal Food Platform</ImageTitle>
                       <ImageDescription>
-                        20년 이상의 경험을 바탕으로 고객님의 공간을 
-                        새롭게 디자인합니다. 전문성과 신뢰성을 바탕으로 
-                        최고의 결과물을 제공하겠습니다.
+                        엄격한 할랄 인증 심사와 15년 이상의 식품 관리 경험을 바탕으로
+                        무슬림 고객님들께 신뢰할 수 있는 할랄 식품을 제공합니다.
                       </ImageDescription>
                       <StatsGrid>
                         <StatItem>
-                          <StatNumber>20+</StatNumber>
+                          <StatNumber>15+</StatNumber>
                           <StatLabel>Years Experience</StatLabel>
                         </StatItem>
                         <StatItem>
-                          <StatNumber>1,200+</StatNumber>
-                          <StatLabel>Projects Done</StatLabel>
+                          <StatNumber>5,000+</StatNumber>
+                          <StatLabel>Halal Products</StatLabel>
                         </StatItem>
                         <StatItem>
-                          <StatNumber>98%</StatNumber>
-                          <StatLabel>Client Satisfaction</StatLabel>
+                          <StatNumber>99%</StatNumber>
+                          <StatLabel>Certification Rate</StatLabel>
                         </StatItem>
                       </StatsGrid>
                     </ImageContent>
                   </ServiceImage>
                   <ServiceContent>
-                    <ServiceTitle isVisible={currentSection === 1}>제공 서비스</ServiceTitle>
+                    <ServiceTitle isVisible={currentSection === 1}>주요 서비스</ServiceTitle>
                     <ServiceList isVisible={currentSection === 1}>
-                      <li>전체 리모델링</li>
-                      <li>주방 리모델링</li>
-                      <li>화장실 리모델링</li>
-                      <li>주택 인테리어</li>
-                      <li>바닥재 시공</li>
+                      <li>할랄 인증 식품 유통</li>
+                      <li>할랄 식품 품질 관리</li>
+                      <li>할랄 인증 컨설팅</li>
+                      <li>무슬림 맞춤 식단</li>
+                      <li>할랄 식품 정보 제공</li>
                     </ServiceList>
                     <StoreButton
                       onClick={() => navigate('/store')}
@@ -93,25 +92,25 @@ const AboutPage = () => {
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
-                    <span>다양한<br />시공 경험</span>
+                    <span>엄격한<br />인증 심사</span>
                   </IconItem>
                   <IconItem isVisible={currentSection === 1} delay={0.3}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <path d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
-                    <span>각 분야 전문가<br />팀 구성</span>
+                    <span>전문 할랄<br />인증 전담팀</span>
                   </IconItem>
                   <IconItem isVisible={currentSection === 1} delay={0.4}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <path d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
-                    <span>고품질<br />마감 실현</span>
+                    <span>철저한<br />품질 관리</span>
                   </IconItem>
                   <IconItem isVisible={currentSection === 1} delay={0.5}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <path d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
-                    <span>순차적 유지관리와<br />합리적인 비용</span>
+                    <span>투명한 인증절차와<br />합리적인 가격</span>
                   </IconItem>
                 </IconGrid>
               </Section2Wrapper>
@@ -148,7 +147,7 @@ const AboutPage = () => {
                     <StatsIcon>
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                          d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                          d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2M7 7h10" />
                       </svg>
                     </StatsIcon>
                     <StatsNumber>300+</StatsNumber>
