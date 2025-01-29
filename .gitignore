@@ -23,3 +23,9 @@ yarn-debug.log*
 yarn-error.log*
 
 /node_modules
+
+# new content
+.env
+.env.local
+.env.development
+.env.production

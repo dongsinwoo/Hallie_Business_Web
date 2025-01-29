@@ -1,61 +1,58 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabaseClient';
 
 const ProductPage = () => {
+  const [products, setProducts] = useState([]);
+  const [stats, setStats] = useState({
+    totalProducts: 0,
+    topSellingProduct: null,
+    secondTopSellingProduct: null
+  });
   const navigate = useNavigate();
 
-  // 예시 데이터 (실제 앱에서는 API 등을 통해 받아올 수 있습니다)
-  const products = [
-    {
-      id: 'product-1',
-      name: '유기농 사과',
-      price: 5900,
-      sales: 150,
-      expiryDate: '2024-01-31',
-      origin: '국내산',
-      halalCert: {
-        certified: true,
-        expiryDate: '2024-01-31'
-      }
-    },
-    {
-      id: 'product-2',
-      name: '프리미엄 소고기',
-      price: 35800,
-      sales: 120,
-      expiryDate: '2024-03-05',
-      origin: '호주산',
-      halalCert: {
-        certified: true,
-        expiryDate: '2024-03-05'
-      }
-    },
-    {
-      id: 'product-3',
-      name: '유기농 당근',
-      price: 3900,
-      sales: 200,
-      expiryDate: '2024-01-25',
-      origin: '국내산',
-      halalCert: {
-        certified: false,
-        reason: '인증 진행중'
-      }
-    },
-    {
-      id: 'product-4',
-      name: '양배추즙',
-      price: 1800,
-      sales: 50,
-      expiryDate: '2024-05-10',
-      origin: '국내산',
-      halalCert: {
-        certified: false,
-        reason: '인증 미신청'
-      }
-    },
-  ];
+  useEffect(() => {
+    fetchProducts();
+    fetchProductStats();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*');
+
+      if (error) throw error;
+      setProducts(data || []);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
+
+  const fetchProductStats = async () => {
+    try {
+      // 전체 상품 수 조회
+      const { count: totalCount } = await supabase
+        .from('products')
+        .select('*', { count: 'exact' });
+
+      // 판매량 기준 상위 상품 조회
+      const { data: topProducts } = await supabase
+        .from('products')
+        .select('*')
+        .order('sales_count', { ascending: false })
+        .limit(2);
+
+      setStats({
+        totalProducts: totalCount,
+        topSellingProduct: topProducts[0],
+        secondTopSellingProduct: topProducts[1]
+      });
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    }
+  };
 
   // 만료일까지 남은 일수를 계산하는 헬퍼 함수
   const getDaysToExpiry = (expiryStr) => {
@@ -92,13 +89,13 @@ const ProductPage = () => {
   // 할랄 인증 만료 임박 상품
   const nearExpiryHalalProducts = products.filter(
     (product) => 
-      product.halalCert?.certified && 
-      getDaysToHalalExpiry(product.halalCert.expiryDate) <= HALAL_RENEWAL_THRESHOLD
+      product.halal_certified && 
+      getDaysToHalalExpiry(product.halal_expiry_date) <= HALAL_RENEWAL_THRESHOLD
   );
 
   // 할랄 미인증 상품
   const nonHalalProducts = products.filter(
-    (product) => !product.halalCert?.certified
+    (product) => !product.halal_certified
   );
 
   // 할랄 인증 신청 핸들러 추가
@@ -144,17 +141,17 @@ const ProductPage = () => {
       <StatsGrid>
         <StatCard>
           <StatTitle>총 상품 수</StatTitle>
-          <StatValue>4</StatValue>
+          <StatValue>{stats.totalProducts}</StatValue>
         </StatCard>
         <StatCard>
           <StatTitle>가장 잘 팔리는 상품</StatTitle>
-          <StatValue>유기농 당근</StatValue>
-          <StatDesc>200개 판매</StatDesc>
+          <StatValue>{stats.topSellingProduct?.name || '-'}</StatValue>
+          <StatDesc>{stats.topSellingProduct?.sales_count || 0}개 판매</StatDesc>
         </StatCard>
         <StatCard>
-          <StatTitle>가장 잘 팔리는 상품</StatTitle>
-          <StatValue>신선 고등어</StatValue>
-          <StatDesc>30개 판매</StatDesc>
+          <StatTitle>두 번째로 잘 팔리는 상품</StatTitle>
+          <StatValue>{stats.secondTopSellingProduct?.name || '-'}</StatValue>
+          <StatDesc>{stats.secondTopSellingProduct?.sales_count || 0}개 판매</StatDesc>
         </StatCard>
       </StatsGrid>
 
@@ -210,12 +207,12 @@ const ProductPage = () => {
             </thead>
             <tbody>
               {nearExpiryHalalProducts.map((product) => {
-                const daysLeft = getDaysToHalalExpiry(product.halalCert.expiryDate);
+                const daysLeft = getDaysToHalalExpiry(product.halal_expiry_date);
                 return (
                   <tr key={product.id}>
                     <td>{product.name}</td>
                     <td>{product.origin}</td>
-                    <td>{product.halalCert.expiryDate}</td>
+                    <td>{product.halal_expiry_date}</td>
                     <td style={{ 
                       color: daysLeft <= 15 ? '#EF4444' : 
                              daysLeft <= 30 ? '#F59E0B' : '#111827',
@@ -255,8 +252,8 @@ const ProductPage = () => {
                   <td>{product.name}</td>
                   <td>{product.origin}</td>
                   <td>
-                    <StatusBadge status={product.halalCert.reason}>
-                      {product.halalCert.reason}
+                    <StatusBadge status={product.halal_reason}>
+                      {product.halal_reason}
                     </StatusBadge>
                   </td>
                   <td>
@@ -340,7 +337,7 @@ const ProductPage = () => {
       <ProductGrid>
         {products.map((product) => (
           <ProductCard key={product.id}>
-            {product.halalCert?.certified && (
+            {product.halal_certified && (
               <HalalBadge title="할랄 인증 제품">
                 <HalalIcon />
               </HalalBadge>
