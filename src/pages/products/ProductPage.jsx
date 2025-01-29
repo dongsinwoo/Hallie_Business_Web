@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../../lib/supabaseClient';
+import { dbSupabase } from '../../lib/supabaseClients';
 
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
@@ -19,7 +19,7 @@ const ProductPage = () => {
 
   const fetchProducts = async () => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await dbSupabase
         .from('products')
         .select('*');
 
@@ -33,12 +33,12 @@ const ProductPage = () => {
   const fetchProductStats = async () => {
     try {
       // 전체 상품 수 조회
-      const { count: totalCount } = await supabase
+      const { count: totalCount } = await dbSupabase
         .from('products')
         .select('*', { count: 'exact' });
 
       // 판매량 기준 상위 상품 조회
-      const { data: topProducts } = await supabase
+      const { data: topProducts } = await dbSupabase
         .from('products')
         .select('*')
         .order('sales_count', { ascending: false })

@@ -1,15 +1,7 @@
-import { supabase } from './supabaseClient'
+import { authSupabase } from './supabaseClients'
 
 export const signIn = async (email, password) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-    })
-    return { data, error }
-}
-
-export const signUp = async (email, password) => {
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await authSupabase.auth.signInWithPassword({
         email,
         password
     })
@@ -17,6 +9,23 @@ export const signUp = async (email, password) => {
 }
 
 export const signOut = async () => {
-    const { error } = await supabase.auth.signOut()
+    const { error } = await authSupabase.auth.signOut()
     return { error }
-} 
+}
+
+export const handleSocialLogin = async (provider) => {
+  try {
+    const { data, error } = await authSupabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/register`
+      }
+    });
+
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Social login error:', error);
+    return { data: null, error };
+  }
+}; 

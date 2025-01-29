@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../../lib/supabaseClient';
+import { dbSupabase } from '../../lib/supabaseClients';
 
 const OrderPage = () => {
   const [orders, setOrders] = useState([]);
@@ -21,9 +21,9 @@ const OrderPage = () => {
 
   const fetchOrders = async () => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await dbSupabase
         .from('consumer_orders')
-        .select('*')  // 다른 회사 주문 데이터 실수로 조회 불가능
+        .select('*')
       if (error) throw error;
       setOrders(data || []);
     } catch (error) {
@@ -37,32 +37,32 @@ const OrderPage = () => {
       const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
 
       // 오늘의 신규 주문
-      const { count: todayCount } = await supabase
+      const { count: todayCount } = await dbSupabase
         .from('consumer_orders')
         .select('*', { count: 'exact' })
         .gte('created_at', today);
 
       // 어제의 주문
-      const { count: yesterdayCount } = await supabase
+      const { count: yesterdayCount } = await dbSupabase
         .from('consumer_orders')
         .select('*', { count: 'exact' })
         .gte('created_at', yesterday)
         .lt('created_at', today);
 
       // 배송준비 필요
-      const { count: preparingCount } = await supabase
+      const { count: preparingCount } = await dbSupabase
         .from('consumer_orders')
         .select('*', { count: 'exact' })
         .eq('order_status', '배송준비중');
 
       // 배송중
-      const { count: inDeliveryCount } = await supabase
+      const { count: inDeliveryCount } = await dbSupabase
         .from('consumer_orders')
         .select('*', { count: 'exact' })
         .eq('order_status', '배송중');
 
       // 취소/반품 요청
-      const { count: cancelCount } = await supabase
+      const { count: cancelCount } = await dbSupabase
         .from('consumer_orders')
         .select('*', { count: 'exact' })
         .eq('order_status', '취소됨');
@@ -107,24 +107,24 @@ const OrderPage = () => {
       <StatsGrid>
         <StatCard>
           <StatTitle>오늘 신규주문</StatTitle>
-          <StatValue>{orderStats.todayNewOrders}건</StatValue>
-          <StatChange positive={orderStats.todayNewOrders > orderStats.yesterdayOrders}>
-            어제 대비 {orderStats.todayNewOrders - orderStats.yesterdayOrders}건
+          <StatValue>{orderStats.todayNewOrders ? orderStats.todayNewOrders : 0}건</StatValue>
+          <StatChange positive={orderStats.todayNewOrders ? orderStats.todayNewOrders > orderStats.yesterdayOrders : false}>
+            어제 대비 {orderStats.todayNewOrders ? orderStats.todayNewOrders - orderStats.yesterdayOrders : 0}건
           </StatChange>
         </StatCard>
         <StatCard>
           <StatTitle>배송준비 필요</StatTitle>
-          <StatValue orange>{orderStats.preparingOrders}건</StatValue>
+          <StatValue orange>{orderStats.preparingOrders ? orderStats.preparingOrders : 0}건</StatValue>
           <StatDesc>48시간 이내 처리 필요</StatDesc>
         </StatCard>
         <StatCard>
           <StatTitle>배송중</StatTitle>
-          <StatValue>{orderStats.inDeliveryOrders}건</StatValue>
+          <StatValue>{orderStats.inDeliveryOrders ? orderStats.inDeliveryOrders : 0}건</StatValue>
           <StatDesc>정상 배송 진행중</StatDesc>
         </StatCard>
         <StatCard>
           <StatTitle>취소/반품 요청</StatTitle>
-          <StatValue red>{orderStats.cancelRequests}건</StatValue>
+          <StatValue red>{orderStats.cancelRequests ? orderStats.cancelRequests : 0}건</StatValue>
           <StatDesc>24시간 이내 처리 필요</StatDesc>
         </StatCard>
       </StatsGrid>
